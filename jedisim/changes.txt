@@ -1,0 +1,42 @@
+##==============================================================================
+## Aug 8, 2017 Tue
+## NUM_GALS 201    (prev=302)
+## MAG0 26.78212   (f6=26.6611, f8=26.78212,f1=28.03741, old100=30.0)
+## PIXSCALE 0.06   (previously 0.03 for 0-100 and 0.06 for 101-201)
+##==============================================================================
+Ref: http://www.stsci.edu/hst/acs/analysis/zeropoints
+The MAG0 for f606w, f814w, and f125w are 26.6611, 26.78212, and 28.03741 respectively.
+
+ MAG0=-2.5*lg(PHOTFLAM)+PHOTZPT
+ 
+ The values of PHOTFLAM and PHOTZPT were obtained from the original CANDELS image headers.
+ 
+ PHOTFLAM are 7.8624958E-20, 7.0331775E-20, and 2.2132778E-20 for the 3 filters;
+ PHOTZPT is -21.1 for all 3 filters.
+
+
+1. rename bulge disk files in simdatabase
+
+2. dev/template_config.sh  (needed by gen_outfiles.py)
+pix_scale=0.06      # arseconds per pixel (arg for jedidistort)
+num_source_images=201
+
+3. dev/gen_outfiles.py
+NUM_GALS = 201
+(look at physics_settings/config.sh and color.txt files)
+
+4. jedicatalog
+#define DATABASE_PIXSCALE 0.06
+
+5. jedicolor
+#define NUM_GALS 201
+
+6. jeditransform
+#define MAG0 26.78212           //magnitude zero point for f814w HST ACS/WFC
+
+
+
+##=============================================================================
+## 
+##=============================================================================
+

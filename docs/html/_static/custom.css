@@ -1,0 +1,26 @@
+@import url("classic.css");
+
+
+div.admonition-todo {
+    border-top: 2px solid red;
+    border-bottom: 2px solid red;
+    border-left: 2px solid red;
+    border-right: 2px solid red;
+    background-color: #ff6347
+}
+
+div.admonition-info {
+    border-top: 2px solid green;
+    border-bottom: 2px solid green;
+    border-left: 2px solid green;
+    border-right: 2px solid green;
+    background-color: #63cc47
+}
+
+div.admonition-readme {
+    border-top: 2px solid red;
+    border-bottom: 2px solid red;
+    border-left: 2px solid red;
+    border-right: 2px solid red;
+    background-color: #F08080
+}

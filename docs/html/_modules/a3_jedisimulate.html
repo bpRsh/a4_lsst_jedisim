@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>a3_jedisimulate &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for a3_jedisimulate</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python3</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="k">import</span> <span class="n">replace_outfolder</span><span class="p">,</span> <span class="n">run_process</span>
+
+<span class="c1"># Global Variables</span>
+<span class="n">config_path</span> <span class="o">=</span> <span class="s2">&quot;physics_settings/config.sh&quot;</span>
+
+
+<div class="viewcode-block" id="config_dict"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.config_dict">[docs]</a><span class="k">def</span> <span class="nf">config_dict</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a dictionary of variables from input file.&quot;&quot;&quot;</span>
+    <span class="c1"># Imports</span>
+    <span class="kn">import</span> <span class="nn">re</span>
+
+    <span class="c1"># Parse config file and make a dictionary</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">string_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&quot;(.*?)&quot;&#39;</span><span class="p">)</span>
+        <span class="n">value_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[^ |</span><span class="se">\t</span><span class="s1">]*&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">):</span>
+                    <span class="n">config</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">string_regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">config</span><span class="p">[</span><span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">value_regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">temp</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+<span class="c1"># Create config dictionary</span>
+<div class="viewcode-block" id="update_config"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.update_config">[docs]</a><span class="k">def</span> <span class="nf">update_config</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">config_dict</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_folder&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span> 
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HST_image&#39;</span><span class="p">,</span>            <span class="s1">&#39;HST_convolved_image&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;LSST_averaged_image&#39;</span><span class="p">,</span>  <span class="s1">&#39;LSST_averaged_noised_image&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;catalog_file&#39;</span><span class="p">,</span>         <span class="s1">&#39;dislist_file&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;distortedlist_file&#39;</span><span class="p">,</span>   <span class="s1">&#39;convolvedlist_file&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        
+    <span class="c1"># Add keys for 90 degree rotated case</span>
+    <span class="n">pre</span> <span class="o">=</span> <span class="s1">&#39;90_&#39;</span> <span class="o">+</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">key90</span> <span class="o">=</span> <span class="s1">&#39;90_&#39;</span> <span class="o">+</span> <span class="n">key</span>
+        <span class="n">config</span><span class="p">[</span><span class="n">key90</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;90_output_folder&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="psf_rescaled_lsst_outfile_lst"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.psf_rescaled_lsst_outfile_lst">[docs]</a><span class="k">def</span> <span class="nf">psf_rescaled_lsst_outfile_lst</span><span class="p">():</span>
+    <span class="n">psf</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;psf/psf</span><span class="si">%d</span><span class="s1">.fits&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">)]</span>
+    <span class="n">rescaled_lsst_outfile</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;jedisim_out/rescaled_lsst/rescaled_lsst_</span><span class="si">%d</span><span class="s1">.fits&#39;</span>
+                              <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span> <span class="p">]</span>
+    <span class="k">return</span> <span class="n">psf</span><span class="p">,</span> <span class="n">rescaled_lsst_outfile</span></div>
+
+
+
+<div class="viewcode-block" id="get_bulge_disk_weights"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.get_bulge_disk_weights">[docs]</a><span class="k">def</span> <span class="nf">get_bulge_disk_weights</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">update_config</span><span class="p">()</span>
+    <span class="n">infile</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;jedicolor_args_infile&#39;</span><span class="p">]</span>
+    <span class="n">b</span><span class="p">,</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">b</span><span class="p">,</span><span class="n">d</span></div>
+
+
+<div class="viewcode-block" id="run_7programs_loop"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.run_7programs_loop">[docs]</a><span class="k">def</span> <span class="nf">run_7programs_loop</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run 7 programs in the loop.&quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">update_config</span><span class="p">()</span>
+    <span class="n">b</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">get_bulge_disk_weights</span><span class="p">()</span>
+    <span class="n">psf</span><span class="p">,</span> <span class="n">rescaled_lsst_outfile</span> <span class="o">=</span> <span class="n">psf_rescaled_lsst_outfile_lst</span><span class="p">()</span>
+    <span class="c1"># for i in range(0, 21):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+
+        <span class="c1"># The jedicolor creates 302 fitsfiles inside config[&#39;color_outfolder&#39;]</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedicolor&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedicolor&#39;</span><span class="p">,</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;color_infile&#39;</span><span class="p">],</span>
+                                  <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="p">])</span>
+
+        <span class="c1"># Run jeditransform</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jeditransform&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jeditransform&#39;</span><span class="p">,</span>
+                                      <span class="n">config</span><span class="p">[</span><span class="s1">&#39;catalog_file&#39;</span><span class="p">],</span>
+                                      <span class="n">config</span><span class="p">[</span><span class="s1">&#39;dislist_file&#39;</span><span class="p">]])</span>
+
+        <span class="c1"># Lens the galaxies one at a time</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedidistort&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedidistort&#39;</span><span class="p">,</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;nx&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;dislist_file&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;lenses_file&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pix_scale&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;lens_z&#39;</span><span class="p">]])</span>
+
+        <span class="c1"># Combine the lensed galaxies onto one large image</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedipaste&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedipaste&#39;</span><span class="p">,</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;nx&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;distortedlist_file&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;HST_image&#39;</span><span class="p">]])</span>
+
+        <span class="c1"># Convonlve the large image with the PSF</span>
+        <span class="c1"># This creates one image for each band of the image</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jediconvolve&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jediconvolve&#39;</span><span class="p">,</span>
+                                     <span class="n">config</span><span class="p">[</span><span class="s1">&#39;HST_image&#39;</span><span class="p">],</span>
+                                     <span class="n">psf</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                     <span class="n">convolved_path</span><span class="p">])</span>
+
+        <span class="c1"># Combine each band into a single image</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedipaste&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedipaste&#39;</span><span class="p">,</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;nx&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;convolvedlist_file&#39;</span><span class="p">],</span>
+                                  <span class="n">config</span><span class="p">[</span><span class="s1">&#39;HST_convolved_image&#39;</span><span class="p">]])</span>
+
+        <span class="c1"># Scale the image down from HST to LSST scale and trim the edgescolor</span>
+        <span class="c1"># outputfile[0] = jedisim_out/rescaled_lsst/rescaled_lsst_0.fits</span>
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedirescale&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedirescale&#39;</span><span class="p">,</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;HST_convolved_image&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;pix_scale&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;final_pix_scale&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_trim&#39;</span><span class="p">],</span>
+                                    <span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_trim&#39;</span><span class="p">],</span>
+                                    <span class="n">rescaled_lsst_outfile</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="average21_and_add_noise"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.average21_and_add_noise">[docs]</a><span class="k">def</span> <span class="nf">average21_and_add_noise</span><span class="p">():</span>
+    <span class="c1"># Average the 21 fits files from jedisim_out/rescaled_lsst/*.fits</span>
+    <span class="c1"># And write to jedisim_out/out0/LSST_averaged.fits</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jediaverage&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jediaverage&#39;</span><span class="p">,</span>
+                                <span class="n">config</span><span class="p">[</span><span class="s1">&#39;rescaled_lsst_outfile&#39;</span><span class="p">],</span>
+                                <span class="n">config</span><span class="p">[</span><span class="s1">&#39;LSST_averaged_image&#39;</span><span class="p">]])</span>
+
+    <span class="c1"># Simulate exposure time and add Poisson noise</span>
+    <span class="c1"># jedisim_out/out0/LSST_averaged.fits ==&gt; jedisim_out/out1/LSST_averaged_noised.fits</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedinoise&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedinoise&#39;</span><span class="p">,</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;LSST_averaged_image&#39;</span><span class="p">],</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;exp_time&#39;</span><span class="p">],</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;noise_mean&#39;</span><span class="p">],</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;LSST_averaged_noised_image&#39;</span><span class="p">]])</span>
+
+
+    <span class="c1"># Add noise to rescaled file and  choose as monochromatic image</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedinoise&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;./executables/jedinoise&#39;</span><span class="p">,</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s2">&quot;monochromatic_infits&quot;</span><span class="p">],</span>                          
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;exp_time&#39;</span><span class="p">],</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s1">&#39;noise_mean&#39;</span><span class="p">],</span>
+                              <span class="n">config</span><span class="p">[</span><span class="s2">&quot;monochromatic_outfits&quot;</span><span class="p">]</span> <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../a3_jedisimulate.html#a3_jedisimulate.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span></div>
+    
+    <span class="c1"># Run 7 programs in the loop</span>
+    <span class="c1"># run_7programs_loop()</span>
+    
+    <span class="c1"># Average 21 outputs and add noise to it.</span>
+    <span class="c1"># average21_and_add_noise()</span>
+
+    
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Beginning time</span>
+    <span class="n">program_begin_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">begin_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+    <span class="c1">#  Run the main program</span>
+    <span class="n">main</span><span class="p">()</span>
+
+    <span class="c1"># Print the time taken</span>
+    <span class="n">program_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">seconds</span>          <span class="o">=</span> <span class="n">program_end_time</span> <span class="o">-</span> <span class="n">program_begin_time</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">h</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Begin time: &quot;</span><span class="p">,</span> <span class="n">begin_ctime</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End   time: &quot;</span><span class="p">,</span> <span class="n">end_ctime</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time taken: </span><span class="si">{0: .0f}</span><span class="s2"> days, </span><span class="si">{1: .0f}</span><span class="s2"> hours, </span><span class="se">\</span>
+<span class="s2">      </span><span class="si">{2: .0f}</span><span class="s2"> minutes, </span><span class="si">{3: f}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>jedimaster module &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="run_jedimaster module" href="run_jedimaster.html" />
+    <link rel="prev" title="a4_jedisimulate90 module" href="a4_jedisimulate90.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="run_jedimaster.html" title="run_jedimaster module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="a4_jedisimulate90.html" title="a4_jedisimulate90 module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-jedimaster">
+<span id="jedimaster-module"></span><h1>jedimaster module<a class="headerlink" href="#module-jedimaster" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body"><p class="first">Bhishan Poudel, Physics PhD Student, Ohio University</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Sep 06, 2016</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Last modified:</th><td class="field-body"><p class="first">Jul 26, 2017</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Jedimaster:</th><td class="field-body"><ul class="first simple">
+<li>BEFORE<ul>
+<li>a.jedicolor, b.jedicatalog</li>
+</ul>
+</li>
+<li>LOOP<ul>
+<li>1.jedicolor    2.jeditransform 3.jedidistort 4.jedipaste 5.jediconvolve 6.jedipaste     7.jedirescale</li>
+</ul>
+</li>
+<li>AFTER<ul>
+<li>a.jediaverage  b.jedinoise     c.jedinoise_10</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Inputs:</th><td class="field-body"><ol class="first arabic simple">
+<li>executables/*</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>jedicolor,   jedicatalog, jedicolor,    jeditransform</li>
+<li>jedidistort, jedipaste,   jediconvolve, jedipaste</li>
+<li>jedirescale, jediaverage, jedinoise,    jedinoise</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>physics_settings/*</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>config1.conf psf.txt lens.txt color.txt</li>
+<li>rescaled_convolved_lsst_out.txt rescaled_convolved_lsst_out90.txt</li>
+<li>psf.txt lens.txt</li>
+</ul>
+</div></blockquote>
+<ol class="arabic" start="3">
+<li><p class="first">psf/*</p>
+<blockquote>
+<div><ul class="simple">
+<li>psf0.fits ... psf20.fits</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">simdatabase/*</p>
+</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>galaxies/f606w_gal0.fits f814w_gal0.fits (302 fitsfiles with four headers)</li>
+<li>bulge_disk_f8/   (empty folder, jedicolor will create fitsfiles)</li>
+<li>radius_db/<a href="#id1"><span class="problematic" id="id2">*</span></a>.dat   20.dat to 29.dat</li>
+<li>red_db/<a href="#id3"><span class="problematic" id="id4">*</span></a>.dat     19.dat to 33.dat and 99.dat and -99.dat</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Outputs:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/rescaled_convolved_lsst_out/rescaled_convolved_lsst_0_to_20.fits</li>
+<li>jedisim_out/rescaled_convolved_lsst_out/rescaled_convolved_lsst90_0_to_20.fits</li>
+<li>jedisim_out/out1/*      folders, txt, fits      from various programs</li>
+<li>jedisim_out/90_out1/*   folders, txt, fits      from various programs</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Final output:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/LSST_convolved_noise.fits</li>
+<li>jedisim_out/out1/90_LSST_convolved_noise.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Runtime:</th><td class="field-body"><ol class="first last arabic simple">
+<li>6 hr 17 min (Jun 08, 2017 Thu, 377 mins)</li>
+<li>7 hr 1 min (Jun 09, 2017 Fri, 421 mins)</li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last">
+<li><p class="first">BEFORE_LOOP</p>
+<ul>
+<li><p class="first">jedicolor</p>
+<ul class="simple">
+<li>This prgoram takes in 302 f814 filter bulge galaxies</li>
+<li>( simdatabase/bulge_f8/f814w_bulge*.fits)</li>
+<li>302 f814 filter disk  galaxies</li>
+<li>( simdatabase/disk_f8/f814w_disk*.fits)</li>
+<li>applies algorithm pix3[ii] = ((1-m)*pix1[ii])+(m*pix2[ii]); with m = 1.</li>
+<li>And finally create 302 galaxies inside simdatabase/bulge_disk_f8/bulge_disk_f8_*.fits</li>
+<li>according to input text file physics_settings/color.txt.</li>
+</ul>
+</li>
+<li><p class="first">jedicatalog</p>
+<blockquote>
+<div><ul class="simple">
+<li>This program takes in : config.sh,lens.txt,psf.txt, config_ouptput_folder,</li>
+<li>simdatabase/radius_db, simdatabase/red_db,</li>
+<li>files_created_by_jedicolor</li>
+<li>(simdatabase/bulge_disk_f8/<a href="#id5"><span class="problematic" id="id6">*</span></a>.fits)</li>
+<li>And, creates       : config_output_folder/catalog.txt</li>
+<li>config_output_folder/convolvedlist.txt</li>
+<li>config_output_folder/distortedlist.txt</li>
+<li>Note: jedisim_out/out1/dislist.txt is created by jeditransform.</li>
+<li>Note: jeditransform will read these catalogs and read input galaxies</li>
+<li>from simdatabase/bulge_disk_f8/f8_bulge_disk*.fits and</li>
+<li>transforms as zipped files to jesisim_out/out1/stamp_0/stamp_0_to_999.fits.gz</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">jedicatalog output1:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li>jedisim_out/out1/catalog.txt looks like this:</li>
+<li>simdatabase/bulge_disk_f8/f8_bulge_disk14.fits        7611.209473     8073.551270</li>
+<li>name                                              x           y</li>
+<li>220.772644    1.500000        0.030000        22.127100       0.380010</li>
+<li>angle         redshift    pixscale    old_mag     old_rad</li>
+<li>27.040001     0.166800        jedisim_out/out1/stamp_0/stamp_0.fits.gz</li>
+<li>new_mag   new_rad     stamp_name</li>
+<li>jedisim_out/out1/distorted_0/distorted_0.fits</li>
+<li>dis_name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">jedicatalog output2:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><ul class="first simple">
+<li>jedisim_out/out1/convolvedlist.txt has 6 lines and first line is:</li>
+<li>jedisim_out/out1/convolved/convolved_band_0.fits</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">jedicatalog output3:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><ul class="first last simple">
+<li>jedisim_out/out1/distortedlist.txt looks like this:</li>
+<li>jedisim_out/out1/distorted_0/distorted_0.fits</li>
+<li>jedisim_out/out1/distorted_12/distorted_12419.fits</li>
+<li>(it has 12420 entries)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Jedicatalog does not create fitsfiles, it creates three catalog files.</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last">
+<li><p class="first">IN_THE_LOOP</p>
+<ol class="arabic">
+<li><p class="first">jedicolor</p>
+<blockquote>
+<div><p>jedicolor scales bulge and disk galaxies into new files.
+e.g. reads simdatabase/bulge_f8/f814w_bulge0.fits and</p>
+<blockquote>
+<div><p>simdatabase/disk_f8/f606w_disk0.fits</p>
+</div></blockquote>
+<p>writes     simdatabase/bulge_disk_f8/bulge_disk_f8_0.fits
+There is no red shift information in these input/output fitsfiles.</p>
+<p>Inside the loop this program does:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">run_process</span><span class="p">(</span><span class="s1">&#39;jedicolor&#39;</span><span class="p">,</span>  <span class="s2">&quot;physics_settings/color.txt&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="mf">20.0</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">jeditransform</p>
+</li>
+</ol>
+<blockquote>
+<div><p>The code is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">run_process</span><span class="p">(</span><span class="s1">&#39;jeditransform&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;catalog_file&#39;</span><span class="p">],</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;dislist_file&#39;</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>This program takes in the catalog list created by jedicatalog:
+(e.g. jedisim_out/out1/trial1_catalog.txt)</p>
+<p>reads the galaxy names which are to be transformed
+(e.g. simdatabase/bulge_disk_f8/bdf8_14.fits)</p>
+<p>and also read other parameters needed to transform that galaxy
+(e.g. x y angle redshift pixscale old_mag old_r50 new_mag new_r50 stamp1 stamp2)</p>
+<p>Then, it creates 12420 zipped fitsfiles inside
+jedisim_out/out1/stamp_0/stamp_0_to_999.fits.gz  (for stamps 0 to 12 )</p>
+<p>It also creates dislist for the jedidistort,viz.,
+jedisim_out/out1/trial1_dislist.txt</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The input fitsfile (i.e. output of jedicolor) should not be NULL.</p>
+</div>
+</div></blockquote>
+<ol class="arabic" start="3">
+<li><p class="first">jedidistort</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jedidistort 12288 12288 dislist.txt lens.txt 0.03 0.3</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>executable   nx    ny    dislist     lens     pix  redshift</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Depends:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/dislist.txt   or, dislist.txt</li>
+<li>physics_settings/lens.txt or, lens.txt</li>
+<li>jedisim_out/out1/stamp_0_to_12/stamp_0_to_999.fits.gz ( 12420 input galaxies)</li>
+<li>jedisim_out/out1/distorted_0_to_12/  ( 13 empty folder to write distorted galaxies)</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Outputs:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/distorted_0/distorted_0.fits 1000*12+ 420 fitsfiles.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><dl class="first last docutils">
+<dt>This program distorts the 12420 galaxies from jedisim_out/out1/<a href="#id7"><span class="problematic" id="id8">stamp_</span></a>/</dt>
+<dd><p class="first last">according to dislist.txt and lens.txt and write distorted
+galaxies inside 13 folders jedisim_out/out1/<a href="#id9"><span class="problematic" id="id10">distorted_</span></a>/</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>(Jun 01, 2017)</p>
+<p>While distorting galaxy 0 and all the rest of galaxies I see 
+following print outs on the terminal:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>!jedisim_out/out1/distorted_0/distorted_0.fits 0 -?ˆ? 
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">jedipaste</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jedipaste 12288 12288 jedisim_out/out1/distortedlist.txt jedisim_out/out1/HST.fits</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>executable  nx    ny    input_distortedlist           output_embedded_large_fitsfile</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Depends:</th><td class="field-body"><ol class="first arabic simple">
+<li>config file for nx,ny,distortedlist,HST</li>
+<li>jedisim_out/out1/distortedlist.txt</li>
+<li>jedisim_out/out1/distorted_0_to12/distorted_0_to_12419.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/HST.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program combines 12,420 distorted fits files inside the jedisim_out/out1/<a href="#id11"><span class="problematic" id="id12">distorted_</span></a>/distorted_fits/
+into a single large embedded image: jedisim_out/out1/HST.fits.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li><dl class="first docutils">
+<dt>jediconvolve</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jediconvolve fitsfile_to_convolve psf_name_to_convolve_with output_convolved_path</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>./jediconvolve jedisim_out/out1/HST.fits psf/psf0.fits jedisim_out/out1/convolved/</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Depends:</th><td class="field-body"><ol class="first arabic simple">
+<li>fitsfile_to_convolve : jedisim_out/out1/HST.fits</li>
+<li>psf_to_convolve_with : psf/psf0.fits</li>
+<li>output_path_to_write_6_bands: jedisim_out/out1/convolved/</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>convolved_band_0.fits  upto convolved_band_5.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program convolves the HST fitsfile with given psf and
+writes the convolved images into 6 bands to save disk space.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</li>
+<li><p class="first">jedipaste</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jedipaste 12288 12288 jedisim_out/out1/distortedlist.txt jedisim_out/out1/HST.fits</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>executable  nx    ny    input_distortedlist                output_embedded_large_fitsfile</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Needs:</th><td class="field-body"><ol class="first arabic simple">
+<li>config file for nx,ny,distortedlist,HST</li>
+<li>jedisim_out/out1/distortedlist.txt</li>
+<li>jedisim_out/out1/distorted_0_to_12/distorted_0_to_12419.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/HST.fits           (after jedidistort)</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/HST_convolved.fits (after jediconvolve)</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Info:</th><td class="field-body"><p class="first">This program combines 12,420 distorted fits files inside the folder
+jedisim_out/out1/<a href="#id13"><span class="problematic" id="id14">distorted_</span></a>/distorted_fits/
+into a single large embedded image: jedisim_out/out1/HST.fits.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program combines 6 convolved bands inside the folder
+jedisim_out/out1/convolved/
+into a single large embedded image: jedisim_out/out1/HST_convolved.fits.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li><p class="first">jedirescale</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jedirescale HST_convolved.fits 0.03 0.2 480 480 LSST_convolved.fits</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>executable   input                     from to  trimx_y output</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Depends:</th><td class="field-body"><ol class="first arabic simple">
+<li>input fitsfile to rescale</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>e.g. jedisim_out/out1/HST_convolved.fits</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>pixscale_from, pixscale_to, trim_x, trim_y</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>e.g input config file = physics_settings/config.sh</li>
+<li>pix_scale=0.03       arseconds per pixel</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>rescaled_fitsfile (as from physics_settings/rescaled_lsst_out.txt)</li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li>e.g. jedisim_out/rescaled_convolved_lsst_out/rescaled_lsst_0.fits</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program scales down HST image to LSST image.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last">
+<li><p class="first">AFTER_LOOP</p>
+<ol class="arabic simple">
+<li>jediaverage</li>
+</ol>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jediaverage psf.txt avg20.fits</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Inputs:</th><td class="field-body"><p class="first">psf.txt (21 psf files names, e.g. psf/psf0.fits)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Outputs:</th><td class="field-body"><p class="first">avg20.fits</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program averages out 21 psf files from the given input
+textfile and writes one output average fitsfile.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>jedinoise</li>
+</ol>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Run:</th><td class="field-body"><table class="first docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">code:</th><td class="field-body"><cite>./jedinoise LSST_convolved.fits 6000 10 LSST_convolved_noise.fits</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">code:</th><td class="field-body"><cite>executable  input_file             exp_time noise_mean output_file</cite></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Depends:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/LSST_convolved.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Output:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_out/out1/LSST_convolved_noise.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body"><p class="first last">This program adds Poisson noise to a given input fitsfile.
+e.g. with exposure time 6000 seconds and noise mean 10,
+we can add noise to fitsfile &#8220;LSST_convolved.fits&#8221;
+to get &#8220;LSST_convolved_noise.fits&#8221;</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>3.jedinoise</p>
+<blockquote>
+<div><p>In this case we add the poisson noise to aout/aout10.fits and
+create aout/aout10_noise.fits and choose this as monochromatic psf.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<dl class="function">
+<dt id="jedimaster.jedimaster">
+<code class="descclassname">jedimaster.</code><code class="descname">jedimaster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jedimaster.html#jedimaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jedimaster.jedimaster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="jedimaster.main">
+<code class="descclassname">jedimaster.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jedimaster.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jedimaster.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run main function.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="a4_jedisimulate90.html"
+                        title="previous chapter">a4_jedisimulate90 module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_jedimaster.html"
+                        title="next chapter">run_jedimaster module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jedimaster.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="run_jedimaster.html" title="run_jedimaster module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="a4_jedisimulate90.html" title="a4_jedisimulate90 module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

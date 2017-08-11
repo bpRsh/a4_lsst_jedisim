@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run_jedimaster module &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="util module" href="util.html" />
+    <link rel="prev" title="jedimaster module" href="jedimaster.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="util module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="jedimaster.html" title="jedimaster module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-run_jedimaster">
+<span id="run-jedimaster-module"></span><h1>run_jedimaster module<a class="headerlink" href="#module-run_jedimaster" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body"><p class="first">Bhishan Poudel; Physics Graduate Student, Ohio University</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body"><p class="first">Aug 01, 2016</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Last update:</th><td class="field-body"><p class="first">Jul 26, 2017</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Inputs:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedimaster.py, especially the final outputs</li>
+<li>out1/trial0_LSST_convolved_noise.fits</li>
+<li>out1/90_trial0_LSST_convolved_noise.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Outputs:</th><td class="field-body"><ol class="first arabic simple">
+<li>jedisim_output/lsst*.fits</li>
+<li>jedisim_output/90_lsst*.fits</li>
+<li>jedisim_output/aout10_noise*.fits</li>
+<li>jedisim_output/90_aout10_noise*.fits</li>
+</ol>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Info:</th><td class="field-body"><ol class="first arabic simple">
+<li>This is a wrapper script to jedimaster.py.</li>
+<li>Basically it copies the final outputs of jedimaster to a different
+directory in each loop.</li>
+</ol>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Runtime:</th><td class="field-body"><ul class="first last simple">
+<li>one loop takes 4 hours 20 min(mac)</li>
+<li>six loop takes 25 hours (mac)</li>
+<li>one loop takes 6 hour 20 minutes (linux)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="run_jedimaster.main">
+<code class="descclassname">run_jedimaster.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_jedimaster.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#run_jedimaster.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run main function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="run_jedimaster.run_jedimaster">
+<code class="descclassname">run_jedimaster.</code><code class="descname">run_jedimaster</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/run_jedimaster.html#run_jedimaster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#run_jedimaster.run_jedimaster" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="jedimaster.html"
+                        title="previous chapter">jedimaster module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="util.html"
+                        title="next chapter">util module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/run_jedimaster.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="util.html" title="util module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="jedimaster.html" title="jedimaster module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Bhishan&#39;s 1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

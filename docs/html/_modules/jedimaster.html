@@ -1,0 +1,485 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>jedimaster &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jedimaster</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1">#-*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author:</span>
+<span class="sd"> </span>
+<span class="sd">  Bhishan Poudel, Physics PhD Student, Ohio University</span>
+
+<span class="sd">:Date: </span>
+
+<span class="sd">  Sep 06, 2016</span>
+
+<span class="sd">:Last modified: </span>
+
+<span class="sd">  |today|</span>
+
+
+<span class="sd">:Jedimaster: </span>
+
+<span class="sd">  + BEFORE</span>
+<span class="sd">  </span>
+<span class="sd">    * a.jedicolor, b.jedicatalog</span>
+<span class="sd">    </span>
+<span class="sd">  + LOOP</span>
+<span class="sd">  </span>
+<span class="sd">    * 1.jedicolor    2.jeditransform 3.jedidistort 4.jedipaste 5.jediconvolve 6.jedipaste     7.jedirescale</span>
+<span class="sd">    </span>
+<span class="sd">  + AFTER</span>
+<span class="sd">  </span>
+<span class="sd">    * a.jediaverage  b.jedinoise     c.jedinoise_10</span>
+<span class="sd">    </span>
+
+<span class="sd">:Inputs:</span>
+
+<span class="sd">  1. executables/*</span>
+<span class="sd">  </span>
+<span class="sd">    - jedicolor,   jedicatalog, jedicolor,    jeditransform</span>
+<span class="sd">    - jedidistort, jedipaste,   jediconvolve, jedipaste</span>
+<span class="sd">    - jedirescale, jediaverage, jedinoise,    jedinoise</span>
+
+<span class="sd">  2. physics_settings/*</span>
+<span class="sd">  </span>
+<span class="sd">    - config1.conf psf.txt lens.txt color.txt</span>
+<span class="sd">    - rescaled_convolved_lsst_out.txt rescaled_convolved_lsst_out90.txt</span>
+<span class="sd">    - psf.txt lens.txt</span>
+
+<span class="sd">  3. psf/*</span>
+<span class="sd">  </span>
+<span class="sd">      - psf0.fits ... psf20.fits</span>
+
+<span class="sd">  4. simdatabase/*</span>
+<span class="sd">  </span>
+<span class="sd">    - galaxies/f606w_gal0.fits f814w_gal0.fits (302 fitsfiles with four headers)</span>
+<span class="sd">    - bulge_disk_f8/   (empty folder, jedicolor will create fitsfiles)</span>
+<span class="sd">    - radius_db/*.dat   20.dat to 29.dat</span>
+<span class="sd">    - red_db/*.dat     19.dat to 33.dat and 99.dat and -99.dat</span>
+
+
+<span class="sd">:Outputs: </span>
+
+<span class="sd">  1. jedisim_out/rescaled_convolved_lsst_out/rescaled_convolved_lsst_0_to_20.fits    </span>
+<span class="sd">  2. jedisim_out/rescaled_convolved_lsst_out/rescaled_convolved_lsst90_0_to_20.fits</span>
+<span class="sd">  3. jedisim_out/out1/*      folders, txt, fits      from various programs</span>
+<span class="sd">  4. jedisim_out/90_out1/*   folders, txt, fits      from various programs</span>
+
+<span class="sd">:Final output: </span>
+
+<span class="sd">  1. jedisim_out/out1/LSST_convolved_noise.fits</span>
+<span class="sd">  2. jedisim_out/out1/90_LSST_convolved_noise.fits</span>
+
+<span class="sd">:Runtime:</span>
+
+<span class="sd">   1. 6 hr 17 min (Jun 08, 2017 Thu, 377 mins)</span>
+<span class="sd">   2. 7 hr 1 min (Jun 09, 2017 Fri, 421 mins)</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">  + BEFORE_LOOP</span>
+
+<span class="sd">    - jedicolor</span>
+<span class="sd">  </span>
+<span class="sd">      * This prgoram takes in 302 f814 filter bulge galaxies</span>
+<span class="sd">      * ( simdatabase/bulge_f8/f814w_bulge*.fits)</span>
+
+<span class="sd">      * 302 f814 filter disk  galaxies</span>
+<span class="sd">      * ( simdatabase/disk_f8/f814w_disk*.fits)</span>
+
+<span class="sd">      * applies algorithm pix3[ii] = ((1-m)*pix1[ii])+(m*pix2[ii]); with m = 1.</span>
+
+<span class="sd">      * And finally create 302 galaxies inside simdatabase/bulge_disk_f8/bulge_disk_f8_*.fits</span>
+<span class="sd">      * according to input text file physics_settings/color.txt.</span>
+
+<span class="sd">    - jedicatalog</span>
+<span class="sd">    </span>
+<span class="sd">        * This program takes in : config.sh,lens.txt,psf.txt, config_ouptput_folder,</span>
+<span class="sd">        * simdatabase/radius_db, simdatabase/red_db,</span>
+<span class="sd">        * files_created_by_jedicolor</span>
+<span class="sd">        * (simdatabase/bulge_disk_f8/*.fits)</span>
+
+<span class="sd">        * And, creates       : config_output_folder/catalog.txt</span>
+<span class="sd">        * config_output_folder/convolvedlist.txt</span>
+<span class="sd">        * config_output_folder/distortedlist.txt</span>
+<span class="sd">        * Note: jedisim_out/out1/dislist.txt is created by jeditransform.</span>
+<span class="sd">        * Note: jeditransform will read these catalogs and read input galaxies</span>
+<span class="sd">        * from simdatabase/bulge_disk_f8/f8_bulge_disk*.fits and</span>
+<span class="sd">        * transforms as zipped files to jesisim_out/out1/stamp_0/stamp_0_to_999.fits.gz</span>
+
+<span class="sd">      :jedicatalog output1:</span>
+<span class="sd">    </span>
+<span class="sd">        - jedisim_out/out1/catalog.txt looks like this:</span>
+<span class="sd">        - simdatabase/bulge_disk_f8/f8_bulge_disk14.fits	7611.209473	8073.551270</span>
+<span class="sd">        - name                                              x           y</span>
+
+<span class="sd">        - 220.772644	1.500000	0.030000	22.127100	0.380010</span>
+<span class="sd">        - angle         redshift    pixscale    old_mag     old_rad</span>
+
+<span class="sd">        - 27.040001	0.166800	jedisim_out/out1/stamp_0/stamp_0.fits.gz	</span>
+<span class="sd">        - new_mag   new_rad     stamp_name                      </span>
+
+<span class="sd">        - jedisim_out/out1/distorted_0/distorted_0.fits</span>
+<span class="sd">        - dis_name</span>
+
+<span class="sd">      :jedicatalog output2:</span>
+<span class="sd">    </span>
+<span class="sd">        - jedisim_out/out1/convolvedlist.txt has 6 lines and first line is:</span>
+<span class="sd">        - jedisim_out/out1/convolved/convolved_band_0.fits</span>
+
+<span class="sd">      :jedicatalog output3:</span>
+<span class="sd">   </span>
+<span class="sd">        - jedisim_out/out1/distortedlist.txt looks like this:</span>
+<span class="sd">        - jedisim_out/out1/distorted_0/distorted_0.fits</span>
+<span class="sd">        - jedisim_out/out1/distorted_12/distorted_12419.fits</span>
+<span class="sd">        - (it has 12420 entries)</span>
+
+<span class="sd">      Jedicatalog does not create fitsfiles, it creates three catalog files.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">  + IN_THE_LOOP</span>
+<span class="sd">  </span>
+<span class="sd">    1. jedicolor</span>
+<span class="sd">    </span>
+<span class="sd">        jedicolor scales bulge and disk galaxies into new files.</span>
+<span class="sd">        e.g. reads simdatabase/bulge_f8/f814w_bulge0.fits and</span>
+<span class="sd">               simdatabase/disk_f8/f606w_disk0.fits</span>
+<span class="sd">        writes     simdatabase/bulge_disk_f8/bulge_disk_f8_0.fits</span>
+<span class="sd">        There is no red shift information in these input/output fitsfiles.</span>
+
+<span class="sd">        Inside the loop this program does::</span>
+<span class="sd">        </span>
+<span class="sd">          run_process(&#39;jedicolor&#39;,  &quot;physics_settings/color.txt&quot;,str(i/20.0)])</span>
+
+<span class="sd">    2. jeditransform</span>
+<span class="sd">    </span>
+<span class="sd">      The code is::</span>
+<span class="sd">    </span>
+<span class="sd">        run_process(&#39;jeditransform&#39;, config[&#39;catalog_file&#39;],config[&#39;dislist_file&#39;]])</span>
+
+<span class="sd">      This program takes in the catalog list created by jedicatalog:</span>
+<span class="sd">      (e.g. jedisim_out/out1/trial1_catalog.txt)</span>
+
+<span class="sd">      reads the galaxy names which are to be transformed</span>
+<span class="sd">      (e.g. simdatabase/bulge_disk_f8/bdf8_14.fits)</span>
+
+<span class="sd">      and also read other parameters needed to transform that galaxy</span>
+<span class="sd">      (e.g. x y angle redshift pixscale old_mag old_r50 new_mag new_r50 stamp1 stamp2)</span>
+
+<span class="sd">      Then, it creates 12420 zipped fitsfiles inside</span>
+<span class="sd">      jedisim_out/out1/stamp_0/stamp_0_to_999.fits.gz  (for stamps 0 to 12 )</span>
+
+<span class="sd">      It also creates dislist for the jedidistort,viz.,</span>
+<span class="sd">      jedisim_out/out1/trial1_dislist.txt</span>
+
+<span class="sd">      .. warning::</span>
+<span class="sd">        </span>
+<span class="sd">          The input fitsfile (i.e. output of jedicolor) should not be NULL.</span>
+
+<span class="sd">    3. jedidistort</span>
+<span class="sd">    </span>
+<span class="sd">        :Run: </span>
+<span class="sd">       </span>
+<span class="sd">          :code:  `./jedidistort 12288 12288 dislist.txt lens.txt 0.03 0.3`</span>
+<span class="sd">          :code: `executable   nx    ny    dislist     lens     pix  redshift`</span>
+
+
+<span class="sd">        :Depends: </span>
+<span class="sd">        </span>
+<span class="sd">          1. jedisim_out/out1/dislist.txt   or, dislist.txt</span>
+<span class="sd">          2. physics_settings/lens.txt or, lens.txt</span>
+<span class="sd">          3. jedisim_out/out1/stamp_0_to_12/stamp_0_to_999.fits.gz ( 12420 input galaxies)</span>
+<span class="sd">          4. jedisim_out/out1/distorted_0_to_12/  ( 13 empty folder to write distorted galaxies)</span>
+
+
+<span class="sd">        :Outputs: </span>
+<span class="sd">        </span>
+<span class="sd">          1. jedisim_out/out1/distorted_0/distorted_0.fits 1000*12+ 420 fitsfiles.</span>
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program distorts the 12420 galaxies from jedisim_out/out1/stamp_/</span>
+<span class="sd">               according to dislist.txt and lens.txt and write distorted</span>
+<span class="sd">               galaxies inside 13 folders jedisim_out/out1/distorted_/</span>
+
+<span class="sd">        .. warning:: (Jun 01, 2017)</span>
+<span class="sd">        </span>
+<span class="sd">            While distorting galaxy 0 and all the rest of galaxies I see </span>
+<span class="sd">            following print outs on the terminal::</span>
+<span class="sd">            </span>
+<span class="sd">            !jedisim_out/out1/distorted_0/distorted_0.fits 0 -?ˆ? </span>
+
+<span class="sd">    4. jedipaste</span>
+<span class="sd">    </span>
+<span class="sd">        :Run: </span>
+<span class="sd">        </span>
+<span class="sd">          :code: `./jedipaste 12288 12288 jedisim_out/out1/distortedlist.txt jedisim_out/out1/HST.fits`</span>
+<span class="sd">          :code: `executable  nx    ny    input_distortedlist           output_embedded_large_fitsfile`</span>
+
+<span class="sd">        :Depends: </span>
+<span class="sd">        </span>
+<span class="sd">          1. config file for nx,ny,distortedlist,HST</span>
+<span class="sd">          2. jedisim_out/out1/distortedlist.txt</span>
+<span class="sd">          3. jedisim_out/out1/distorted_0_to12/distorted_0_to_12419.fits</span>
+
+
+<span class="sd">        :Output: </span>
+<span class="sd">        </span>
+<span class="sd">          1. jedisim_out/out1/HST.fits</span>
+
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program combines 12,420 distorted fits files inside the jedisim_out/out1/distorted_/distorted_fits/</span>
+<span class="sd">          into a single large embedded image: jedisim_out/out1/HST.fits.</span>
+
+<span class="sd">    5. jediconvolve</span>
+<span class="sd">        :Run: </span>
+<span class="sd">        </span>
+<span class="sd">          :code: `./jediconvolve fitsfile_to_convolve psf_name_to_convolve_with output_convolved_path`</span>
+
+<span class="sd">          :code: `./jediconvolve jedisim_out/out1/HST.fits psf/psf0.fits jedisim_out/out1/convolved/`</span>
+
+<span class="sd">        :Depends: </span>
+<span class="sd">        </span>
+<span class="sd">          1. fitsfile_to_convolve : jedisim_out/out1/HST.fits</span>
+<span class="sd">          2. psf_to_convolve_with : psf/psf0.fits</span>
+<span class="sd">          3. output_path_to_write_6_bands: jedisim_out/out1/convolved/</span>
+
+
+<span class="sd">        :Output: </span>
+<span class="sd">        </span>
+<span class="sd">          1. convolved_band_0.fits  upto convolved_band_5.fits</span>
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program convolves the HST fitsfile with given psf and</span>
+<span class="sd">          writes the convolved images into 6 bands to save disk space.</span>
+
+<span class="sd">    6. jedipaste</span>
+<span class="sd">    </span>
+<span class="sd">        :Run: </span>
+<span class="sd">        </span>
+<span class="sd">          :code: `./jedipaste 12288 12288 jedisim_out/out1/distortedlist.txt jedisim_out/out1/HST.fits`</span>
+<span class="sd">          :code: `executable  nx    ny    input_distortedlist                output_embedded_large_fitsfile`</span>
+
+<span class="sd">        :Needs: </span>
+<span class="sd">        </span>
+<span class="sd">          1. config file for nx,ny,distortedlist,HST</span>
+<span class="sd">          2. jedisim_out/out1/distortedlist.txt</span>
+<span class="sd">          3. jedisim_out/out1/distorted_0_to_12/distorted_0_to_12419.fits</span>
+
+
+<span class="sd">        :Output: </span>
+<span class="sd">        </span>
+<span class="sd">          1. jedisim_out/out1/HST.fits           (after jedidistort)</span>
+<span class="sd">      </span>
+<span class="sd">        :Output: </span>
+<span class="sd">        </span>
+<span class="sd">          1. jedisim_out/out1/HST_convolved.fits (after jediconvolve)</span>
+
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program combines 12,420 distorted fits files inside the folder</span>
+<span class="sd">          jedisim_out/out1/distorted_/distorted_fits/</span>
+<span class="sd">          into a single large embedded image: jedisim_out/out1/HST.fits.</span>
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program combines 6 convolved bands inside the folder</span>
+<span class="sd">          jedisim_out/out1/convolved/</span>
+<span class="sd">          into a single large embedded image: jedisim_out/out1/HST_convolved.fits.</span>
+
+<span class="sd">    7. jedirescale</span>
+<span class="sd">    </span>
+<span class="sd">        :Run:</span>
+<span class="sd">        </span>
+<span class="sd">          :code: `./jedirescale HST_convolved.fits 0.03 0.2 480 480 LSST_convolved.fits`</span>
+<span class="sd">          :code: `executable   input                     from to  trimx_y output`</span>
+
+
+
+<span class="sd">        :Depends: </span>
+<span class="sd">        </span>
+<span class="sd">          1. input fitsfile to rescale</span>
+<span class="sd">            - e.g. jedisim_out/out1/HST_convolved.fits</span>
+<span class="sd">                 </span>
+<span class="sd">          2. pixscale_from, pixscale_to, trim_x, trim_y</span>
+<span class="sd">            - e.g input config file = physics_settings/config.sh</span>
+<span class="sd">            - pix_scale=0.03       arseconds per pixel</span>
+
+<span class="sd">        :Output: </span>
+<span class="sd">        </span>
+<span class="sd">          1. rescaled_fitsfile (as from physics_settings/rescaled_lsst_out.txt)</span>
+<span class="sd">            - e.g. jedisim_out/rescaled_convolved_lsst_out/rescaled_lsst_0.fits</span>
+
+<span class="sd">        :Info: </span>
+<span class="sd">        </span>
+<span class="sd">          This program scales down HST image to LSST image.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">  + AFTER_LOOP</span>
+<span class="sd">  </span>
+<span class="sd">    1. jediaverage</span>
+<span class="sd">    </span>
+<span class="sd">      :Run: </span>
+<span class="sd">      </span>
+<span class="sd">        :code: `./jediaverage psf.txt avg20.fits`</span>
+
+<span class="sd">      :Inputs:</span>
+<span class="sd">       </span>
+<span class="sd">        psf.txt (21 psf files names, e.g. psf/psf0.fits)</span>
+<span class="sd">        </span>
+<span class="sd">      :Outputs: avg20.fits</span>
+
+<span class="sd">      :Info: </span>
+<span class="sd">      </span>
+<span class="sd">        This program averages out 21 psf files from the given input</span>
+<span class="sd">        textfile and writes one output average fitsfile.</span>
+
+<span class="sd">    2. jedinoise</span>
+<span class="sd">    </span>
+<span class="sd">      :Run: </span>
+<span class="sd">      </span>
+<span class="sd">        :code: `./jedinoise LSST_convolved.fits 6000 10 LSST_convolved_noise.fits`</span>
+<span class="sd">        :code: `executable  input_file             exp_time noise_mean output_file`</span>
+
+<span class="sd">      :Depends: </span>
+<span class="sd">      </span>
+<span class="sd">        1. jedisim_out/out1/LSST_convolved.fits</span>
+
+<span class="sd">      :Output: </span>
+<span class="sd">      </span>
+<span class="sd">        1. jedisim_out/out1/LSST_convolved_noise.fits</span>
+
+<span class="sd">      :Info: </span>
+<span class="sd">      </span>
+<span class="sd">        This program adds Poisson noise to a given input fitsfile.</span>
+<span class="sd">        e.g. with exposure time 6000 seconds and noise mean 10,</span>
+<span class="sd">        we can add noise to fitsfile &quot;LSST_convolved.fits&quot;</span>
+<span class="sd">        to get &quot;LSST_convolved_noise.fits&quot;</span>
+
+<span class="sd">    3.jedinoise</span>
+<span class="sd">    </span>
+<span class="sd">      In this case we add the poisson noise to aout/aout10.fits and</span>
+<span class="sd">      create aout/aout10_noise.fits and choose this as monochromatic psf.</span>
+
+<span class="sd">   </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="k">import</span> <span class="n">run_process</span>
+
+<div class="viewcode-block" id="jedimaster"><a class="viewcode-back" href="../jedimaster.html#jedimaster.jedimaster">[docs]</a><span class="k">def</span> <span class="nf">jedimaster</span><span class="p">():</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;Create output dirs.&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;python &#39;</span><span class="p">,</span> <span class="s2">&quot;a1_create_odirs.py&quot;</span><span class="p">])</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;Create 3 catalogs.&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;python &#39;</span><span class="p">,</span> <span class="s2">&quot;a2_create_3catalogs.py&quot;</span><span class="p">])</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;Run the simulation.&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;python &#39;</span><span class="p">,</span> <span class="s2">&quot;a3_jedisimulate.py&quot;</span><span class="p">])</span>
+    <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;Run the simulation for rotated case.&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;python &#39;</span><span class="p">,</span> <span class="s2">&quot;jedisimulate90.py&quot;</span><span class="p">])</span></div>
+    
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../jedimaster.html#jedimaster.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="n">jedimaster</span><span class="p">()</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+template_config.sh is needed by gen_outfiles.py to create config.sh

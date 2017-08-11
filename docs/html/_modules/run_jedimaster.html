@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run_jedimaster &#8212; Bhishan&#39;s 1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for run_jedimaster</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: </span>
+
+<span class="sd">  Bhishan Poudel; Physics Graduate Student, Ohio University</span>
+
+<span class="sd">:Date: </span>
+
+<span class="sd">  Aug 01, 2016</span>
+
+<span class="sd">:Last update: |today|</span>
+
+<span class="sd">:Inputs: </span>
+
+<span class="sd">  1. jedimaster.py, especially the final outputs</span>
+<span class="sd">  2. out1/trial0_LSST_convolved_noise.fits</span>
+<span class="sd">  3. out1/90_trial0_LSST_convolved_noise.fits</span>
+
+<span class="sd">:Outputs: </span>
+<span class="sd">  1. jedisim_output/lsst*.fits</span>
+<span class="sd">  2. jedisim_output/90_lsst*.fits</span>
+<span class="sd">  3. jedisim_output/aout10_noise*.fits</span>
+<span class="sd">  4. jedisim_output/90_aout10_noise*.fits</span>
+
+<span class="sd">:Info:</span>
+<span class="sd">  1. This is a wrapper script to jedimaster.py.</span>
+<span class="sd">  2. Basically it copies the final outputs of jedimaster to a different</span>
+<span class="sd">     directory in each loop.</span>
+
+<span class="sd">:Runtime: </span>
+
+<span class="sd">  - one loop takes 4 hours 20 min(mac)</span>
+<span class="sd">  - six loop takes 25 hours (mac)</span>
+<span class="sd">  - one loop takes 6 hour 20 minutes (linux)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># Imports</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="k">import</span> <span class="n">run_process</span>
+
+<span class="c1"># start time</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">start_ctime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="run_jedimaster"><a class="viewcode-back" href="../run_jedimaster.html#run_jedimaster.run_jedimaster">[docs]</a><span class="k">def</span> <span class="nf">run_jedimaster</span><span class="p">():</span>
+    <span class="c1"># create outfolder names</span>
+    <span class="n">outfolder</span> <span class="o">=</span> <span class="s1">&#39;jedisim_output/jedisim_output&#39;</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;_%b_</span><span class="si">%d</span><span class="s2">_%H_%M/&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfolder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outfolder</span><span class="p">)</span>
+
+
+    <span class="n">NUM_LOOP</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">NUM_LOOP</span>
+    <span class="c1"># run jedimaster in a loop</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Running jedimaster loop :&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+        <span class="n">run_process</span><span class="p">(</span><span class="s2">&quot;jedimaster.py&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;python &#39;</span><span class="p">,</span> <span class="s2">&quot;jedimaster.py&quot;</span><span class="p">])</span>
+
+        <span class="c1"># copy final output files</span>
+        <span class="n">infile1</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;jedisim_out/out0/trial0_LSST_convolved_noise.fits&#39;</span>
+        <span class="n">outfile1</span> <span class="o">=</span> <span class="n">outfolder</span> <span class="o">+</span> <span class="s1">&#39;lsst_</span><span class="si">{:d}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">infile2</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;jedisim_out/90_out1/90_trial0_LSST_convolved_noise.fits&#39;</span>
+        <span class="n">outfile2</span> <span class="o">=</span> <span class="n">outfolder</span> <span class="o">+</span> <span class="s1">&#39;90_lsst_</span><span class="si">{:d}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">infile3</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;jedisim_out/rescaled_lsst/aout10_noise.fits&#39;</span>
+        <span class="n">outfile3</span> <span class="o">=</span> <span class="n">outfolder</span> <span class="o">+</span> <span class="s1">&#39;monochromatic_</span><span class="si">{:d}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">infile4</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;jedisim_out/rescaled_lsst90/90_aout10_noise.fits&#39;</span>
+        <span class="n">outfile4</span> <span class="o">=</span> <span class="n">outfolder</span> <span class="o">+</span> <span class="s1">&#39;90_monochromatic_</span><span class="si">{:d}</span><span class="s1">.fits&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile1</span><span class="p">,</span> <span class="n">outfile1</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile2</span><span class="p">,</span> <span class="n">outfile2</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile3</span><span class="p">,</span> <span class="n">outfile3</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">infile4</span><span class="p">,</span> <span class="n">outfile4</span><span class="p">)</span></div>
+
+        <span class="c1"># print(&#39;{} {} {}&#39;.format(&#39;!&#39; * 80, &#39;&#39;, &#39;&#39;))</span>
+        <span class="c1"># print(&#39;{} {} {} {}&#39;.format(&#39;!&#39; * 35, &#39; End of jedimaster loop :&#39;, i, &#39;!&#39; * 35))</span>
+        <span class="c1"># print(&#39;{} {} {}&#39;.format(&#39;!&#39; * 80, &#39;\n&#39;, &#39;&#39;))</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../run_jedimaster.html#run_jedimaster.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Run main function.&quot;&quot;&quot;</span>
+    <span class="n">run_jedimaster</span><span class="p">()</span></div>
+    
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Beginning time</span>
+    <span class="n">program_begin_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">begin_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+
+    <span class="c1">#  Run the main program</span>
+    <span class="n">main</span><span class="p">()</span>
+
+    <span class="c1"># Print the time taken</span>
+    <span class="n">program_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">end_ctime</span>        <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">()</span>
+    <span class="n">seconds</span>          <span class="o">=</span> <span class="n">program_end_time</span> <span class="o">-</span> <span class="n">program_begin_time</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">h</span>             <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nBegin time: &quot;</span><span class="p">,</span> <span class="n">begin_ctime</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End   time: &quot;</span><span class="p">,</span> <span class="n">end_ctime</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time taken: </span><span class="si">{0: .0f}</span><span class="s2"> days, </span><span class="si">{1: .0f}</span><span class="s2"> hours, </span><span class="se">\</span>
+<span class="s2">      </span><span class="si">{2: .0f}</span><span class="s2"> minutes, </span><span class="si">{3: f}</span><span class="s2"> seconds.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Bhishan&#39;s 1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Bhishan Poudel.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.6.
+    </div>
+  </body>
+</html>
